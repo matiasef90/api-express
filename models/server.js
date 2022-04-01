@@ -1,17 +1,17 @@
 const express = require('express')
+const cors = require('cors')
 
     const app = express() 
     const port = process.env.PORT
 
     const middleware = () => {
+        app.use(cors())
+        app.use(express.json())
         app.use(express.static('public'))
-        console.log('middleware')
     }
 
     const routes = () => {
-        app.get('/api', (req, res) => {
-            res.send('Hello World')
-        })
+        app.use('/api/usuario', require('../routes/usuario'))
     }
     
     const listen = () => {
