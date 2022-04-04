@@ -1,5 +1,6 @@
-const { request, response } = require('express')
-const Usuario = require('../models/usuario')
+const { request, response } = require('express');
+const bcryptjs = require('bcryptjs');
+const Usuario = require('../models/usuario');
 
 const getUsuario = (req = request, res = response) => {
     res.json({
@@ -8,8 +9,10 @@ const getUsuario = (req = request, res = response) => {
 }
 
 const postUsuario = async (req = request, res = response) => {
-    const body = req.body;
-    const usuario = new Usuario({body});
+    const { nombre, email, password, rol } = req.body;
+    const usuario = new Usuario({nombre, email, password, rol});
+    const salt = bcryptjs.genSaltSync();
+    usuario.password = bcryptjs.hashSync(password, salt);
     await usuario.save();
     res.json({
         msg: 'postUsuario',
@@ -17,9 +20,17 @@ const postUsuario = async (req = request, res = response) => {
     })
 }
 
-const putUsuario = (req = request, res = response) => {
+const putUsuario = async (req = request, res = response) => {
+    const { id } = req.params;
+    const { email, google, password, ...resto } = req.body;
+    if (password) {
+        const salt = bcryptjs.genSaltSync();
+        resto.password = bcryptjs.hashSync(password, salt);
+    }
+    const usuario = await Usuario.findByIdAndUpdate(id, resto);
     res.json({
-        msg: 'putUsuario'
+        msg: 'putUsuario',
+        usuario,
     })
 }
 
