@@ -2,9 +2,19 @@ const { request, response } = require('express');
 const bcryptjs = require('bcryptjs');
 const Usuario = require('../models/usuario');
 
-const getUsuario = (req = request, res = response) => {
+const getUsuario = async (req = request, res = response) => {
+    const { limite = 5, desde = 0 } = req.query;
+    const [usuarios, total] = await Promise.all([
+        Usuario.find({ estado: true })
+            .limit(Number(limite))
+            .skip(Number(desde)),
+        Usuario.countDocuments({ estado: true })
+    ]);
+
+    console.log(usuarios, total);
     res.json({
-        msg: 'getUsuario'
+        usuarios,
+        total
     })
 }
 
@@ -22,7 +32,7 @@ const postUsuario = async (req = request, res = response) => {
 
 const putUsuario = async (req = request, res = response) => {
     const { id } = req.params;
-    const { email, google, password, ...resto } = req.body;
+    const { _id, email, google, password, ...resto } = req.body;
     if (password) {
         const salt = bcryptjs.genSaltSync();
         resto.password = bcryptjs.hashSync(password, salt);
@@ -34,9 +44,12 @@ const putUsuario = async (req = request, res = response) => {
     })
 }
 
-const deleteUsuario = (req = request, res = response) => {
+const deleteUsuario = async (req = request, res = response) => {
+    const { id } = req.body;
+    const usuario = await Usuario.findByIdAndUpdate(id, {estado: false});
     res.json({
-        msg: 'deleteUsuario'
+        msg: 'Usuario Eliminado',
+        usuario
     })
 }
 
