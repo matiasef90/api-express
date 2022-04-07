@@ -45,11 +45,13 @@ const putUsuario = async (req = request, res = response) => {
 }
 
 const deleteUsuario = async (req = request, res = response) => {
-    const { id } = req.body;
-    const usuario = await Usuario.findByIdAndUpdate(id, {estado: false});
+    const { id } = req.params;
+    const usuarioAuth = req.usuario;
+    const usuario = await Usuario.findByIdAndUpdate(id, {estado: true});
     res.json({
         msg: 'Usuario Eliminado',
-        usuario
+        usuario,
+        usuarioAuth,
     })
 }
 
