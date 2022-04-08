@@ -14,6 +14,16 @@ const validarJwt = async (req = request, res = response, next) => {
     try {
         const { uid } = jwt.verify(token, process.env.SECRETORPRIVATEKEY);
         const usuario = await Usuario.findById(uid);
+        if (!usuario) {
+            return res.status(401).json({
+                msg: 'Token no valido - usuario no existe'
+            })
+        }
+        if (!usuario.estado) {
+            return res.status(401).json({
+                msg: 'Token no valido - usuario estado false'
+            })
+        }
         req.usuario = usuario;
         next();
         
@@ -25,4 +35,6 @@ const validarJwt = async (req = request, res = response, next) => {
     }
 };
 
-module.exports = validarJwt;
+module.exports = {
+    validarJwt,
+};
