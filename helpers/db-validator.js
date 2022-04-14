@@ -3,7 +3,6 @@ const Usuario = require('../models/usuario');
 
 const esRolValido = async ( rol = '' ) => {
     const existeRol = await Role.findOne({ rol });
-    console.log(existeRol);
     if(!existeRol) {
         throw new Error(`El rol ${rol} no es valido`);
     }

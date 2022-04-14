@@ -12,8 +12,9 @@ const { dbConnection } = require('../database/config');
     }
 
     const routes = () => {
-        app.use('/api/usuario', require('../routes/usuario'));
         app.use('/api/auth', require('../routes/auth'));
+        app.use('/api/categoria', require('../routes/categoria'));
+        app.use('/api/usuario', require('../routes/usuario'));
     }
     
     const listen = () => {
